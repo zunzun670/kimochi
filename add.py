@@ -9,9 +9,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 状態管理（複数選択）
-if "states" not in st.session_state:
-    st.session_state.states = set()
+# 状態初期化
+if "selected" not in st.session_state:
+    st.session_state.selected = set()
+
+if "result" not in st.session_state:
+    st.session_state.result = None
 
 # 感情リスト
 emotions = [
@@ -23,16 +26,16 @@ emotions = [
     "なんとなく不安"
 ]
 
-# トグル関数
+# トグル
 def toggle(emotion):
-    if emotion in st.session_state.states:
-        st.session_state.states.remove(emotion)
+    if emotion in st.session_state.selected:
+        st.session_state.selected.remove(emotion)
     else:
-        st.session_state.states.add(emotion)
+        st.session_state.selected.add(emotion)
 
 st.subheader("今どんな感じ？（複数OK）")
 
-# ボタン表示（色変更なし）
+# ボタン表示
 col1, col2 = st.columns(2)
 
 for i, e in enumerate(emotions):
@@ -45,27 +48,35 @@ for i, e in enumerate(emotions):
             if st.button(e, key=e):
                 toggle(e)
 
-st.divider()
+# GOボタン
+st.markdown("---")
 
-# ランダムメッセージ
-messages = [
-    "これは今の反応。結論ではない。",
-    "今の気持ちは一時的なもの。",
-    "判断する必要はない時間。",
-    "これは状態であって事実の評価ではない。",
-    "今は波の中にいるだけ。",
-]
+if st.button("GO"):
+    messages = [
+        "これは今の反応。結論ではない。",
+        "今の気持ちは一時的なもの。",
+        "判断しなくていい時間。",
+        "これは状態であって事実ではない。",
+        "今は波の中にいるだけ。",
+    ]
+
+    st.session_state.result = {
+        "states": list(st.session_state.selected),
+        "message": random.choice(messages)
+    }
 
 # 表示
-if st.session_state.states:
+if st.session_state.result:
     st.subheader("今の状態")
 
-    st.write(" / ".join(st.session_state.states))
+    if st.session_state.result["states"]:
+        st.write(" / ".join(st.session_state.result["states"]))
+    else:
+        st.write("（未選択）")
 
-    st.info(random.choice(messages))
+    st.info(st.session_state.result["message"])
 
+    # リセット
     if st.button("リセット"):
-        st.session_state.states = set()
-
-else:
-    st.write("まだ選択なし")
+        st.session_state.selected = set()
+        st.session_state.result = None
