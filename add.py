@@ -16,7 +16,6 @@ if "selected" not in st.session_state:
 if "result" not in st.session_state:
     st.session_state.result = None
 
-# 感情リスト
 emotions = [
     "不安",
     "寂しい",
@@ -26,7 +25,6 @@ emotions = [
     "なんとなく不安"
 ]
 
-# トグル
 def toggle(emotion):
     if emotion in st.session_state.selected:
         st.session_state.selected.remove(emotion)
@@ -35,7 +33,7 @@ def toggle(emotion):
 
 st.subheader("今どんな感じ？（複数OK）")
 
-# ボタン表示
+# ボタン
 col1, col2 = st.columns(2)
 
 for i, e in enumerate(emotions):
@@ -48,9 +46,25 @@ for i, e in enumerate(emotions):
             if st.button(e, key=e):
                 toggle(e)
 
-# GOボタン
+# GOを「線の下」に配置
 st.markdown("---")
 
+# GOボタン強調CSS（ダブル枠風）
+st.markdown(
+    """
+    <style>
+    div.stButton > button:first-child {
+        border: 2px solid #444 !important;
+        outline: 2px solid #aaa !important;
+        font-weight: bold;
+        padding: 0.5em 1em;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# GO処理
 if st.button("GO"):
     messages = [
         "これは今の反応。結論ではない。",
@@ -76,7 +90,6 @@ if st.session_state.result:
 
     st.info(st.session_state.result["message"])
 
-    # リセット
     if st.button("リセット"):
         st.session_state.selected = set()
         st.session_state.result = None
