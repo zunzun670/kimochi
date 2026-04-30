@@ -1,128 +1,90 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button"; // shadcn/uiコンポーネント
 
-export default function EmotionApp() {
-  const [selectedEmotions, setSelectedEmotions] = useState([]);
-
-  const comments = [
-    "それは今の波。ずっと同じ強さでは続かない。",
-    "感情は通り過ぎるもの。抱え込まなくていい。",
-    "複雑な気持ちも、あなたの大事な一部。",
-    "今の状態を認識できた時点で前進している。",
-    "気持ちは一色じゃない。混ざっていて当然。",
-    "急いで結論を出さなくても大丈夫。",
-    "感情を見つめること自体がセルフケア。",
-    "今日の自分を責めるより、観察してみる。",
-    "どの感情にも意味がある。",
-    "回復は静かに進んでいく。"
-  ];
+export default function EmotionLabelingApp() {
+  // 選択された感情を配列で管理（マルチセレクト）
+  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
 
   const emotions = [
-    {
-      id: "happy",
-      label: "うれしい",
-      emoji: "✨",
-      active:
-        "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-xl border-transparent",
-    },
-    {
-      id: "sad",
-      label: "悲しい",
-      emoji: "🌧️",
-      active:
-        "bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl border-transparent",
-    },
-    {
-      id: "angry",
-      label: "イライラ",
-      emoji: "🔥",
-      active:
-        "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-xl border-transparent",
-    },
-    {
-      id: "anxious",
-      label: "不安",
-      emoji: "🌙",
-      active:
-        "bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-xl border-transparent",
-    },
-    {
-      id: "tired",
-      label: "疲れた",
-      emoji: "☁️",
-      active:
-        "bg-gradient-to-r from-violet-500 to-indigo-500 text-white shadow-xl border-transparent",
-    },
-    {
-      id: "calm",
-      label: "落ち着く",
-      emoji: "🍃",
-      active:
-        "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl border-transparent",
-    },
+    { id: 'lonely', label: "寂しい" },
+    { id: 'sad', label: "悲しい" },
+    { id: 'anxious', label: "不安" },
+    { id: 'angry', label: "怒り" },
+    { id: 'empty', label: "虚しい" },
+    { id: 'painful', label: "苦しい" }
   ];
 
-  const toggleEmotion = (id) => {
+  const toggleEmotion = (label: string) => {
     setSelectedEmotions((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(label)
+        ? prev.filter((e) => e !== label)
+        : [...prev, label]
     );
   };
 
-  const message = useMemo(() => {
-    if (selectedEmotions.length === 0) return "";
-    return comments[selectedEmotions.length % comments.length];
-  }, [selectedEmotions]);
+  const resetSelection = () => setSelectedEmotions([]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#fff9fc] via-[#f8fbff] to-[#eef8ff] flex items-center justify-center px-6 py-12">
-      <section className="w-full max-w-3xl rounded-[36px] bg-white/70 backdrop-blur-2xl border border-white shadow-2xl p-8 md:p-10">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
-            今日の気持ち
+    <div className="min-h-screen w-full bg-[#f0f7ff] flex items-center justify-center p-6">
+      {/* iOSガラス風カード */}
+      <div className="w-full max-w-2xl bg-white/60 backdrop-blur-sm rounded-[40px] border border-[#bfdbfe]/40 shadow-sm p-10 flex flex-col items-center">
+        
+        <header className="mb-12 text-center">
+          <h1 className="text-[#1e3a8a]/40 text-xs tracking-[0.3em] font-bold uppercase mb-4">
+            Labeling Thoughts
           </h1>
-          <p className="text-slate-500 mt-3">
-            今の自分に近いものを自由に選んでください
+          <p className="text-[#1e3a8a] text-xl font-medium">
+            今、心にある感覚をすべて選んでください
           </p>
-        </div>
+        </header>
 
-        {/* ボタンを離して配置 */}
-        <div className="flex flex-wrap gap-4 justify-center">
+        {/* 感情ボタンエリア: スマホで縦(flex-col)、PCで横(sm:flex-row) */}
+        <div className="flex flex-wrap flex-col sm:flex-row justify-center gap-4 w-full mb-12">
           {emotions.map((emotion) => {
-            const selected = selectedEmotions.includes(emotion.id);
-
+            const isSelected = selectedEmotions.includes(emotion.label);
             return (
-              <button
+              <Button
                 key={emotion.id}
-                onClick={() => toggleEmotion(emotion.id)}
+                onClick={() => toggleEmotion(emotion.label)}
+                variant="outline"
+                // 指示通りの条件分岐クラス
                 className={`
-                  min-w-[140px] px-6 py-4 rounded-3xl border
-                  transition-all duration-300 ease-out
-                  hover:-translate-y-1 hover:scale-[1.03]
-                  backdrop-blur-md
-                  ${
-                    selected
-                      ? emotion.active
-                      : "bg-white/20 border-white/40 text-slate-700"
-                  }
+                  h-14 px-8 rounded-full text-lg transition-all duration-300 shadow-sm
+                  ${isSelected 
+                    ? "bg-[#dbeafe] text-[#1e3a8a] border-transparent" 
+                    : "bg-white text-[#1e3a8a]/70 border-[#bfdbfe] hover:bg-[#f0f7ff]"}
                 `}
               >
-                <div className="text-2xl mb-1">{emotion.emoji}</div>
-                <div className="font-semibold">{emotion.label}</div>
-              </button>
+                {emotion.label}
+              </Button>
             );
           })}
         </div>
 
+        {/* 選択後の表示エリア（透明感のあるボックス） */}
         {selectedEmotions.length > 0 && (
-          <div className="mt-10 rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 p-6 shadow-lg">
-            <h2 className="text-lg font-semibold text-slate-700 mb-3">
-              あなたへのメッセージ
-            </h2>
-            <p className="text-slate-600 leading-relaxed">{message}</p>
+          <div className="w-full bg-white/40 border border-[#bfdbfe]/30 p-6 rounded-[30px] text-center mb-8">
+            <p className="text-xs text-[#1e3a8a]/50 mb-2 uppercase tracking-widest">Selected Labels</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {selectedEmotions.map(label => (
+                <span key={label} className="text-[#1e3a8a] font-bold">
+                  {label}
+                </span>
+              ))}
+            </div>
           </div>
         )}
-      </section>
-    </main>
+
+        <Button
+          variant="ghost"
+          onClick={resetSelection}
+          className="text-[#1e3a8a]/30 hover:text-[#1e3a8a]/60 hover:bg-transparent text-xs tracking-widest uppercase"
+        >
+          Reset Selection
+        </Button>
+      </div>
+    </div>
   );
 }
