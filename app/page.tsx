@@ -1,75 +1,135 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 export default function EmotionApp() {
-  const [status, setStatus] = useState("今の感情を選択してください");
-  const [color, setColor] = useState("bg-slate-50");
-  const [selectedEmotion, setSelectedEmotion] = useState(null);
-  const [message, setMessage] = useState("");
+  const [selectedEmotions, setSelectedEmotions] = useState([]);
 
   const comments = [
-    "それは今の波だよ。波のあとには、ちゃんと凪がくる。",
-    "感情は天気みたいなもの。ずっと同じ空ではいられない。",
-    "今つらくても、その感情を感じられていること自体が前に進んでる証拠。",
-    "心がざわつく日は、無理に整えなくていい。少し休めばいい。",
-    "その気持ちを否定しなくていい。ちゃんとそこにいていい感情だよ。",
-    "大丈夫じゃない日があっても、それは弱さじゃない。",
-    "今のあなたに必要なのは答えじゃなくて、少しのやさしさかもしれない。",
-    "気持ちは流れていくもの。今日の重さが明日も同じとは限らない。",
-    "立ち止まることは後退じゃない。整えるための時間。",
-    "感情を言葉にできた時点で、もうひとつ整理が進んでいる。"
+    "それは今の波。ずっと同じ強さでは続かない。",
+    "感情は整理するものというより、通り過ぎるもの。",
+    "複雑な気持ちを持てるのは、それだけ真剣に向き合っているから。",
+    "今の状態に名前をつけられた時点で、一歩進んでいる。",
+    "気持ちは一色じゃない。混ざっていて当然。",
+    "急いで結論を出さなくていい日もある。",
+    "しんどさの中にも、ちゃんと回復の流れはある。",
+    "感情を見つめること自体がセルフケア。",
+    "今日の自分を責めるより、観察してみる。",
+    "どの感情も、あなたの一部として意味がある。"
   ];
 
   const emotions = [
-    { label: "😊 うれしい", color: "bg-pink-100", active: "bg-pink-400 text-white" },
-    { label: "😢 悲しい", color: "bg-blue-100", active: "bg-blue-400 text-white" },
-    { label: "😡 イライラ", color: "bg-red-100", active: "bg-red-400 text-white" },
-    { label: "😰 不安", color: "bg-yellow-100", active: "bg-yellow-400 text-white" },
-    { label: "😴 疲れた", color: "bg-purple-100", active: "bg-purple-400 text-white" },
+    {
+      id: "happy",
+      label: "うれしい",
+      emoji: "✨",
+      base: "bg-pink-100 text-pink-700 border-pink-200",
+      active:
+        "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-transparent shadow-xl scale-105",
+    },
+    {
+      id: "sad",
+      label: "悲しい",
+      emoji: "🌧️",
+      base: "bg-sky-100 text-sky-700 border-sky-200",
+      active:
+        "bg-gradient-to-r from-sky-500 to-cyan-500 text-white border-transparent shadow-xl scale-105",
+    },
+    {
+      id: "angry",
+      label: "イライラ",
+      emoji: "🔥",
+      base: "bg-orange-100 text-orange-700 border-orange-200",
+      active:
+        "bg-gradient-to-r from-orange-500 to-red-500 text-white border-transparent shadow-xl scale-105",
+    },
+    {
+      id: "anxious",
+      label: "不安",
+      emoji: "🌙",
+      base: "bg-amber-100 text-amber-700 border-amber-200",
+      active:
+        "bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-transparent shadow-xl scale-105",
+    },
+    {
+      id: "tired",
+      label: "疲れた",
+      emoji: "☁️",
+      base: "bg-violet-100 text-violet-700 border-violet-200",
+      active:
+        "bg-gradient-to-r from-violet-500 to-indigo-500 text-white border-transparent shadow-xl scale-105",
+    },
+    {
+      id: "calm",
+      label: "落ち着く",
+      emoji: "🍃",
+      base: "bg-emerald-100 text-emerald-700 border-emerald-200",
+      active:
+        "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-xl scale-105",
+    },
   ];
 
-  const handleEmotion = (emotion) => {
-    setStatus(`${emotion.label} を感じているんだね`);
-    setColor(emotion.color);
-    setSelectedEmotion(emotion.label);
-    const randomComment =
-      comments[Math.floor(Math.random() * comments.length)];
-    setMessage(randomComment);
+  const toggleEmotion = (id) => {
+    setSelectedEmotions((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
-  return (
-    <div
-      className={`min-h-screen flex items-center justify-center transition-all duration-500 ${color}`}
-    >
-      <div className="bg-white/90 backdrop-blur-sm shadow-2xl rounded-3xl p-8 max-w-md w-full text-center border border-white">
-        <h1 className="text-2xl font-bold mb-3 text-slate-700">
-          🌷 Emotion App
-        </h1>
-        <p className="text-slate-600 mb-6">{status}</p>
+  const message = useMemo(() => {
+    if (selectedEmotions.length === 0) return "";
+    const index = selectedEmotions.length % comments.length;
+    return comments[index];
+  }, [selectedEmotions]);
 
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {emotions.map((emotion, index) => (
-            <button
-              key={index}
-              onClick={() => handleEmotion(emotion)}
-              className={`px-4 py-3 rounded-2xl font-medium shadow-md transition-all duration-300 hover:scale-105 ${
-                selectedEmotion === emotion.label
-                  ? emotion.active
-                  : `${emotion.color} text-slate-700`
-              }`}
-            >
-              {emotion.label}
-            </button>
-          ))}
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-[#fff7fb] via-[#f8fbff] to-[#eef7ff] flex items-center justify-center px-6">
+      <section className="w-full max-w-2xl rounded-[32px] bg-white/80 backdrop-blur-xl border border-white shadow-2xl p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">
+            今日の気持ちを選んでください
+          </h1>
+          <p className="text-slate-500 mt-2">
+            複数選択OK・今の自分に近いものをタップ
+          </p>
         </div>
 
-        {message && (
-          <div className="bg-slate-50 rounded-2xl p-5 shadow-inner border border-slate-100">
-            <p className="text-slate-700 leading-relaxed">{message}</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {emotions.map((emotion) => {
+            const selected = selectedEmotions.includes(emotion.id);
+
+            return (
+              <button
+                key={emotion.id}
+                onClick={() => toggleEmotion(emotion.id)}
+                className={`
+                  relative rounded-3xl border px-5 py-6 text-left
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-1 hover:shadow-lg
+                  ${selected ? emotion.active : emotion.base}
+                `}
+              >
+                <div className="text-2xl mb-2">{emotion.emoji}</div>
+                <div className="font-semibold text-base">{emotion.label}</div>
+
+                {selected && (
+                  <span className="absolute top-3 right-3 text-sm font-bold">
+                    ✓
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {selectedEmotions.length > 0 && (
+          <div className="mt-8 rounded-3xl bg-white shadow-inner border border-slate-100 p-6">
+            <h2 className="text-lg font-semibold text-slate-700 mb-3">
+              今のあなたへ
+            </h2>
+            <p className="text-slate-600 leading-relaxed">{message}</p>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
