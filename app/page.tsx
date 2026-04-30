@@ -1,53 +1,74 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function EmotionApp() {
   const [status, setStatus] = useState("今の感情を選択してください");
   const [color, setColor] = useState("bg-slate-50");
+  const [selectedEmotion, setSelectedEmotion] = useState(null);
+  const [message, setMessage] = useState("");
 
-  // ぴよさんが思考を整理するために必要な、本来の感情ラベル
-  const emotions = [
-    { label: "寂しい", msg: "寂しい", bg: "bg-blue-50", btn: "bg-blue-500" },
-    { label: "悲しい", msg: "悲しい", bg: "bg-indigo-50", btn: "bg-indigo-500" },
-    { label: "不安", msg: "不安", bg: "bg-slate-100", btn: "bg-slate-600" },
-    { label: "怒り", msg: "怒り", bg: "bg-red-50", btn: "bg-red-500" },
-    { label: "虚しい", msg: "虚しい", bg: "bg-gray-100", btn: "bg-gray-500" },
-    { label: "苦しい", msg: "苦しい", bg: "bg-zinc-100", btn: "bg-zinc-700" },
+  const comments = [
+    "それは今の波だよ。波のあとには、ちゃんと凪がくる。",
+    "感情は天気みたいなもの。ずっと同じ空ではいられない。",
+    "今つらくても、その感情を感じられていること自体が前に進んでる証拠。",
+    "心がざわつく日は、無理に整えなくていい。少し休めばいい。",
+    "その気持ちを否定しなくていい。ちゃんとそこにいていい感情だよ。",
+    "大丈夫じゃない日があっても、それは弱さじゃない。",
+    "今のあなたに必要なのは答えじゃなくて、少しのやさしさかもしれない。",
+    "気持ちは流れていくもの。今日の重さが明日も同じとは限らない。",
+    "立ち止まることは後退じゃない。整えるための時間。",
+    "感情を言葉にできた時点で、もうひとつ整理が進んでいる。"
   ];
 
-  return (
-    <div className={`min-h-screen flex items-center justify-center transition-colors duration-700 ${color} p-4`}>
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-[40px] shadow-2xl p-10 text-center border border-white">
-        <h1 className="text-sm font-semibold text-gray-400 tracking-[0.2em] mb-12 uppercase">Labeling Thoughts</h1>
-        
-        <div className="mb-12 min-h-[80px] flex items-center justify-center">
-          <p className="text-3xl font-bold text-gray-800 tracking-tight">
-            {status}
-          </p>
-        </div>
+  const emotions = [
+    { label: "😊 うれしい", color: "bg-pink-100", active: "bg-pink-400 text-white" },
+    { label: "😢 悲しい", color: "bg-blue-100", active: "bg-blue-400 text-white" },
+    { label: "😡 イライラ", color: "bg-red-100", active: "bg-red-400 text-white" },
+    { label: "😰 不安", color: "bg-yellow-100", active: "bg-yellow-400 text-white" },
+    { label: "😴 疲れた", color: "bg-purple-100", active: "bg-purple-400 text-white" },
+  ];
 
-        <div className="grid grid-cols-2 gap-4">
-          {emotions.map((e) => (
+  const handleEmotion = (emotion) => {
+    setStatus(`${emotion.label} を感じているんだね`);
+    setColor(emotion.color);
+    setSelectedEmotion(emotion.label);
+    const randomComment =
+      comments[Math.floor(Math.random() * comments.length)];
+    setMessage(randomComment);
+  };
+
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center transition-all duration-500 ${color}`}
+    >
+      <div className="bg-white/90 backdrop-blur-sm shadow-2xl rounded-3xl p-8 max-w-md w-full text-center border border-white">
+        <h1 className="text-2xl font-bold mb-3 text-slate-700">
+          🌷 Emotion App
+        </h1>
+        <p className="text-slate-600 mb-6">{status}</p>
+
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          {emotions.map((emotion, index) => (
             <button
-              key={e.label}
-              onClick={() => {
-                setStatus(e.msg);
-                setColor(e.bg);
-              }}
-              className={`${e.btn} text-white font-medium py-5 rounded-3xl shadow-lg hover:brightness-110 active:scale-95 transition-all duration-200 text-lg`}
+              key={index}
+              onClick={() => handleEmotion(emotion)}
+              className={`px-4 py-3 rounded-2xl font-medium shadow-md transition-all duration-300 hover:scale-105 ${
+                selectedEmotion === emotion.label
+                  ? emotion.active
+                  : `${emotion.color} text-slate-700`
+              }`}
             >
-              {e.label}
+              {emotion.label}
             </button>
           ))}
         </div>
 
-        <button 
-          onClick={() => { setStatus("今の感情を選択してください"); setColor("bg-slate-50"); }}
-          className="mt-12 text-xs text-gray-400 hover:text-gray-600 transition-colors tracking-widest uppercase"
-        >
-          Reset View
-        </button>
+        {message && (
+          <div className="bg-slate-50 rounded-2xl p-5 shadow-inner border border-slate-100">
+            <p className="text-slate-700 leading-relaxed">{message}</p>
+          </div>
+        )}
       </div>
     </div>
   );
