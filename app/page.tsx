@@ -7,15 +7,15 @@ export default function EmotionApp() {
 
   const comments = [
     "それは今の波。ずっと同じ強さでは続かない。",
-    "感情は整理するものというより、通り過ぎるもの。",
-    "複雑な気持ちを持てるのは、それだけ真剣に向き合っているから。",
-    "今の状態に名前をつけられた時点で、一歩進んでいる。",
+    "感情は通り過ぎるもの。抱え込まなくていい。",
+    "複雑な気持ちも、あなたの大事な一部。",
+    "今の状態を認識できた時点で前進している。",
     "気持ちは一色じゃない。混ざっていて当然。",
-    "急いで結論を出さなくていい日もある。",
-    "しんどさの中にも、ちゃんと回復の流れはある。",
+    "急いで結論を出さなくても大丈夫。",
     "感情を見つめること自体がセルフケア。",
     "今日の自分を責めるより、観察してみる。",
-    "どの感情も、あなたの一部として意味がある。"
+    "どの感情にも意味がある。",
+    "回復は静かに進んでいく。"
   ];
 
   const emotions = [
@@ -23,49 +23,43 @@ export default function EmotionApp() {
       id: "happy",
       label: "うれしい",
       emoji: "✨",
-      base: "bg-pink-100 text-pink-700 border-pink-200",
       active:
-        "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-xl border-transparent",
     },
     {
       id: "sad",
       label: "悲しい",
       emoji: "🌧️",
-      base: "bg-sky-100 text-sky-700 border-sky-200",
       active:
-        "bg-gradient-to-r from-sky-500 to-cyan-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl border-transparent",
     },
     {
       id: "angry",
       label: "イライラ",
       emoji: "🔥",
-      base: "bg-orange-100 text-orange-700 border-orange-200",
       active:
-        "bg-gradient-to-r from-orange-500 to-red-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-xl border-transparent",
     },
     {
       id: "anxious",
       label: "不安",
       emoji: "🌙",
-      base: "bg-amber-100 text-amber-700 border-amber-200",
       active:
-        "bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-xl border-transparent",
     },
     {
       id: "tired",
       label: "疲れた",
       emoji: "☁️",
-      base: "bg-violet-100 text-violet-700 border-violet-200",
       active:
-        "bg-gradient-to-r from-violet-500 to-indigo-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-violet-500 to-indigo-500 text-white shadow-xl border-transparent",
     },
     {
       id: "calm",
       label: "落ち着く",
       emoji: "🍃",
-      base: "bg-emerald-100 text-emerald-700 border-emerald-200",
       active:
-        "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-xl scale-105",
+        "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl border-transparent",
     },
   ];
 
@@ -77,23 +71,23 @@ export default function EmotionApp() {
 
   const message = useMemo(() => {
     if (selectedEmotions.length === 0) return "";
-    const index = selectedEmotions.length % comments.length;
-    return comments[index];
+    return comments[selectedEmotions.length % comments.length];
   }, [selectedEmotions]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#fff7fb] via-[#f8fbff] to-[#eef7ff] flex items-center justify-center px-6">
-      <section className="w-full max-w-2xl rounded-[32px] bg-white/80 backdrop-blur-xl border border-white shadow-2xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">
-            今日の気持ちを選んでください
+    <main className="min-h-screen bg-gradient-to-br from-[#fff9fc] via-[#f8fbff] to-[#eef8ff] flex items-center justify-center px-6 py-12">
+      <section className="w-full max-w-3xl rounded-[36px] bg-white/70 backdrop-blur-2xl border border-white shadow-2xl p-8 md:p-10">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
+            今日の気持ち
           </h1>
-          <p className="text-slate-500 mt-2">
-            複数選択OK・今の自分に近いものをタップ
+          <p className="text-slate-500 mt-3">
+            今の自分に近いものを自由に選んでください
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {/* ボタンを離して配置 */}
+        <div className="flex flex-wrap gap-4 justify-center">
           {emotions.map((emotion) => {
             const selected = selectedEmotions.includes(emotion.id);
 
@@ -102,29 +96,28 @@ export default function EmotionApp() {
                 key={emotion.id}
                 onClick={() => toggleEmotion(emotion.id)}
                 className={`
-                  relative rounded-3xl border px-5 py-6 text-left
+                  min-w-[140px] px-6 py-4 rounded-3xl border
                   transition-all duration-300 ease-out
-                  hover:-translate-y-1 hover:shadow-lg
-                  ${selected ? emotion.active : emotion.base}
+                  hover:-translate-y-1 hover:scale-[1.03]
+                  backdrop-blur-md
+                  ${
+                    selected
+                      ? emotion.active
+                      : "bg-white/20 border-white/40 text-slate-700"
+                  }
                 `}
               >
-                <div className="text-2xl mb-2">{emotion.emoji}</div>
-                <div className="font-semibold text-base">{emotion.label}</div>
-
-                {selected && (
-                  <span className="absolute top-3 right-3 text-sm font-bold">
-                    ✓
-                  </span>
-                )}
+                <div className="text-2xl mb-1">{emotion.emoji}</div>
+                <div className="font-semibold">{emotion.label}</div>
               </button>
             );
           })}
         </div>
 
         {selectedEmotions.length > 0 && (
-          <div className="mt-8 rounded-3xl bg-white shadow-inner border border-slate-100 p-6">
+          <div className="mt-10 rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 p-6 shadow-lg">
             <h2 className="text-lg font-semibold text-slate-700 mb-3">
-              今のあなたへ
+              あなたへのメッセージ
             </h2>
             <p className="text-slate-600 leading-relaxed">{message}</p>
           </div>
